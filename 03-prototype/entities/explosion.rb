@@ -11,7 +11,7 @@ class Explosion
 
   def sound
     @@sound ||= Gosu::Sample.new(
-      @window, Game.media_path('explosion.mp3')
+      $window, Game.media_path('explosion.mp3')
     )
   end
 

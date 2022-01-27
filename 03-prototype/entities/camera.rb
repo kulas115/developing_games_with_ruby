@@ -41,7 +41,7 @@ class Camera
       target_zoom = @target.speed > 1.1 ? 0.85 : 1.0
       if @zoom <= (target_zoom - 0.01)
         @zoom += zoom_delta / 3
-      elsif @zoom > (target_delta + 0.01)
+      elsif @zoom > (target_zoom + 0.01)
         @zoom -= zoom_delta / 3
       end
     end

@@ -8,7 +8,7 @@ class Tank
   def initialize(map)
     @map = map
     @units = Gosu::TexturePacker.load_json(
-      $window, Game.media_path('ground_units.json'), :precise
+      Game.media_path('ground_units.json'), :precise
     )
     @body = @units.frame('tank1_body.png')
     @shadow = @units.frame('tank1_body_shadow.png')
@@ -28,7 +28,7 @@ class Tank
 
   def shoot(target_x, target_y)
     if Gosu.milliseconds - @last_shot > SHOOT_DELAY
-      @last_shot = Gosu.millisecond
+      @last_shot = Gosu.milliseconds
       Bullet.new(@x, @y, target_x, target_y).fire(100)
     end
   end
@@ -69,7 +69,7 @@ class Tank
   end
 
   def draw
-    @shawdow.draw_rot(@x - 1, @y - 2, 0, @body_angle)
+    @shadow.draw_rot(@x - 1, @y - 2, 0, @body_angle)
     @body.draw_rot(@x, @y, 1, @body_angle)
     @gun.draw_rot(@x, @y, 2, @gun_angle)
   end
