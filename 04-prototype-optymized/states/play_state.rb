@@ -6,6 +6,8 @@ require_relative '../entities/camera'
 require_relative '../entities/bullet'
 require_relative '../entities/explosion'
 
+require 'ruby-prof' if ENV['ENABLE_PROFILING']
+
 class PlayState < GameState
   def initialize
     @map = Map.new
@@ -13,6 +15,18 @@ class PlayState < GameState
     @camera = Camera.new(@tank)
     @bullets = []
     @explosions = []
+  end
+
+  def enter
+    RubyProf.start if ENV['ENABLE_PROFILING']
+  end
+
+  def leave
+    if ENV['ENABLE_PROFILING']
+      result = RubyProf.stop
+      printer = RubyProf::FlatPrinter.new(result)
+      printer.print(STDOUT)
+    end
   end
 
   def update
