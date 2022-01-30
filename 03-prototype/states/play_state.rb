@@ -21,8 +21,7 @@ class PlayState < GameState
     @bullets.map(&:update)
     @bullets.reject!(&:done?)
     @camera.update
-    $window.caption = 'Tank Prototype. ' \
-                      "[FPS: #{Gosu.fps}. Tank @ #{@tank.x.round}:#{@tank.y.round}]"
+    update_caption
   end
 
   def draw
@@ -50,5 +49,18 @@ class PlayState < GameState
     $window.close if id == Gosu::KbQ
 
     GameState.switch(MenuState.instance) if id == Gosu::KbEscape
+  end
+
+  private
+
+  def update_caption
+    now = Gosu.milliseconds
+
+    if now - (@caption_updated_at || 0) > 1000
+      @window.caption = 'Tanks Prototype. ' <<
+        "[FPS: #{Gosu.fps}. " <<
+        "Tank @ #{@tank.x.round}:#{@tank.y.round}]"
+      @caption_updated_at = now
+    end
   end
 end
