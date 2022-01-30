@@ -8,6 +8,7 @@ class GameWindow < Gosu::Window
   end
 
   def update
+    Game.track_update_interval
     @state.update
   end
 
@@ -21,5 +22,9 @@ class GameWindow < Gosu::Window
 
   def button_down(id)
     @state.button_down(id)
+  end
+
+  def needs_cursor?
+    Game.update_interval > 200
   end
 end
