@@ -10,12 +10,6 @@ class Camera
     @zoom = 1
   end
 
-  def can_view?(x, y, obj)
-    x0, x1, y0, y1 = viewport
-    (x0 - obj.width..x1).include?(x) &&
-      (y0 - obj.height..y1).include?(y)
-  end
-
   def mouse_coords
     x, y = target_delta_on_screen
     mouse_x_on_map = @target.x +
@@ -70,7 +64,7 @@ class Camera
     )
   end
 
-  private
+  # private
 
   def viewport
     x0 = @x - ($window.width / 2) / @zoom
