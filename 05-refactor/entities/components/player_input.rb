@@ -24,7 +24,7 @@ class PlayerInput < Component
       object.throttle_down = false
     end
 
-    object.shoot(*@camera.mouse_coords) if Utils.any_button_down?(Gosu::MsLeft)
+    object.shoot(*@camera.mouse_coords) if Utils.button_down?(Gosu::MsLeft)
   end
 
   private
@@ -39,7 +39,7 @@ class PlayerInput < Component
   def change_angle(previous_angle, up, down, right, left)
     if Utils.button_down?(up)
       angle = 0.0
-      angle += 45.0 if Utils.button_down(left)
+      angle += 45.0 if Utils.button_down?(left)
       angle -= 45.0 if Utils.button_down?(right)
     elsif Utils.button_down?(down)
       angle = 180.0

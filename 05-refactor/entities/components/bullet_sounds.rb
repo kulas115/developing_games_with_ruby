@@ -3,7 +3,7 @@
 class BulletSounds
   class << self
     def play
-      sounds.play
+      sound.play
     end
 
     private
