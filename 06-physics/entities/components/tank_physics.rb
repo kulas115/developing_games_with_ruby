@@ -12,11 +12,67 @@ class TankPhysics < Component
   end
 
   def can_move_to?(x, y)
-    @map.can_move_to?(x, y)
+    old_x = object.x
+    old_y = object.y
+    object.x = x
+    object.y = y
+    return false unless @map.can_move_to?(x, y)
+
+    @object_pool.nearby(object, 100).each do |obj|
+      next unless collides_with_poly?(obj.box)
+
+      # Allow to get unstuck
+      old_distance = Utils.distance_between(
+        obj.x, obj.y, old_x, old_y
+      )
+      new_distance = Utils.distance_between(
+        obj.x, obj.y, x, y
+      )
+      return false if new_distance < old_distance
+    end
+    true
+  ensure
+    object.x = old_x
+    object.y = old_y
   end
 
   def moving?
     @speed.positive?
+  end
+
+  def box_height
+    @box_height ||= object.graphics.height
+  end
+
+  def box_width
+    @box_width ||= object.graphics.width
+  end
+
+  # Tank box looks like H. Vertices:
+  # 1   2   5   6
+  #     3   4
+  #
+  #    10   9
+  # 12 11   8   7
+  def box
+    w = box_width / 2 - 1
+    h = box_height / 2 - 1
+    tw = 8 # track width
+    fd = 8 # front depth
+    rd = 6 # rear depth
+    Utils.rotate(object.direction, x, y,
+                 x + w,      y + h,      # 1
+                 x + w - tw, y + h,      # 2
+                 x + w - tw, y + h - fd, # 3
+                 x - w + tw, y + h - fd, # 4
+                 x - w + tw, y + h,      # 5
+                 x - w,      y + h,      # 6
+                 x - w,      y - h,      # 7
+                 x - w + tw, y - h,      # 8
+                 x - w + tw, y - h + rd, # 9
+                 x + w - tw, y - h + rd, # 10
+                 x + w - tw, y - h,      # 11
+                 x + w,      y - h)      # 12
   end
 
   def update
@@ -71,5 +127,17 @@ class TankPhysics < Component
   def decelerate
     @speed -= 0.5 if @speed.positive?
     @speed = 0.0 if @speed < 0.01 # damp
+  end
+
+  def collides_with_poly?(poly)
+    if poly
+      poly.each_slice(2) do |x, y|
+        return true if Utils.point_in_poly(x, y, *box)
+      end
+      box.each_slice(2) do |x, y|
+        return true if Utils.point_in_poly(x, y, *poly)
+      end
+    end
+    false
   end
 end

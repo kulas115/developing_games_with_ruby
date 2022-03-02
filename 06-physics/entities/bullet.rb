@@ -14,6 +14,10 @@ class Bullet < GameObject
     BulletSounds.play
   end
 
+  def box
+    [x, y]
+  end
+
   def explode
     Explosion.new(object_pool, @x, @y)
     mark_for_removal
