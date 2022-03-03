@@ -8,9 +8,8 @@ class MenuState < GameState
 
   def initialize
     @message = Gosu::Image.from_text(
-      $window,
-      'Tank Prototype',
-      Gosu.default_font_name, 100
+      'Tank Prototype', 100,
+      font: Gosu.default_font_name
     )
   end
 
@@ -26,7 +25,6 @@ class MenuState < GameState
 
   def music
     @@music ||= Gosu::Song.new(
-      $window,
       Utils.media_path('menu_music.mp3')
     )
   end
@@ -34,8 +32,8 @@ class MenuState < GameState
   def update
     continue_text = @play_state ? 'C = Continue, ' : ''
     @info = Gosu::Image.from_text(
-      $window, "Q = Quit, #{continue_text}N = New Game",
-      Gosu.default_font_name, 30
+      "Q = Quit, #{continue_text}N = New Game", 30,
+      font: Gosu.default_font_name
     )
   end
 

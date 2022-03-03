@@ -21,13 +21,13 @@ class TankSounds < Component
 
   def driving_sound
     @@driving_sound ||= Gosu::Sample.new(
-      $window, Utils.media_path('tank_driving.mp3')
+      Utils.media_path('tank_driving.mp3')
     )
   end
 
   def crash_sound
     @@crash_sound ||= Gosu::Sample.new(
-      $window, Utils.media_path('crash.ogg')
+      Utils.media_path('crash.ogg')
     )
   end
 end

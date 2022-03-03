@@ -17,16 +17,27 @@ class Map
     loop do
       x = rand(0..MAP_WIDTH * TILE_SIZE)
       y = rand(0..MAP_HEIGHT * TILE_SIZE)
-
-      return [x, y] if can_move_to?(x, y)
-
-      puts "Invalid spawn point: #{[x, y]}"
+      if can_move_to?(x, y)
+        return [x, y]
+      else
+        puts "Invalid spawn point: #{[x, y]}"
+      end
     end
   end
 
   def can_move_to?(x, y)
     tile = tile_at(x, y)
     tile && tile != @water
+  end
+
+  def movement_penalty(x, y)
+    tile = tile_at(x, y)
+    case tile
+    when @sand
+      0.33
+    else
+      0
+    end
   end
 
   def draw(viewport)
@@ -56,11 +67,14 @@ class Map
 
   def load_tiles
     tiles = Gosu::Image.load_tiles(
-      $window, Utils.media_path('ground.png'), 128, 128, true
+      Utils.media_path('ground.png'),
+      128, 128, tileable: true
     )
     @sand = tiles[0]
     @grass = tiles[8]
-    @water = Gosu::Image.new(Utils.media_path('water.png'), tileable: true)
+    @water = Gosu::Image.new(
+      Utils.media_path('water.png'), tileable: true
+    )
   end
 
   def generate_map
@@ -69,10 +83,8 @@ class Map
       Perlin::Curve::CUBIC, 2
     )
     map = {}
-
     MAP_WIDTH.times do |x|
       map[x] = {}
-
       MAP_HEIGHT.times do |y|
         n = noises[x * 0.1, y * 0.1]
         n = contrast.call(n)

@@ -10,7 +10,7 @@ class ExplosionSounds
 
     def sound
       @@sound ||= Gosu::Sample.new(
-        $window, Utils.media_path('explosion.mp3')
+        Utils.media_path('explosion.mp3')
       )
     end
   end
