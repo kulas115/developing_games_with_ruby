@@ -32,7 +32,6 @@ class TankGraphics < Component
 
   def draw_bounding_box
     i = 0
-    puts object.methods - Object.methods
     object.box.each_slice(2) do |x, y|
       color = DEBUG_COLORS[i]
       $window.draw_triangle(
