@@ -25,6 +25,10 @@ class GameObject
     @removable = true
   end
 
+  def box; end
+
+  def collide; end
+
   protected
 
   attr_reader :object_pool
