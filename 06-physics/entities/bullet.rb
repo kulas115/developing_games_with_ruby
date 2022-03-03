@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Bullet < GameObject
-  attr_accessor :x, :y, :target_x, :target_y, :speed, :fired_at
+  attr_accessor :x, :y, :target_x, :target_y, :source, :speed, :fired_at
 
   def initialize(object_pool, source_x, source_y, target_x, target_y)
     super(object_pool)
@@ -9,7 +9,7 @@ class Bullet < GameObject
     @y = source_y
     @target_x = target_x
     @target_y = target_y
-    BulletPhysics.new(self)
+    BulletPhysics.new(self, object_pool)
     BulletGraphics.new(self)
     BulletSounds.play
   end
@@ -24,6 +24,7 @@ class Bullet < GameObject
   end
 
   def fire(speed)
+    @source = source
     @speed = speed
     @fired_at = Gosu.milliseconds
   end
