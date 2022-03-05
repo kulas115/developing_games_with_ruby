@@ -38,7 +38,7 @@ class TankHealth < Component
   def inflict_damage(amount)
     if @health.positive?
       @health_updated = true
-      @health = [@health - amount.to_i, 0]
+      @health = [@health - amount.to_i, 0].max
       Explosion.new(@object_pool, x, y) if @health < 1
     end
   end

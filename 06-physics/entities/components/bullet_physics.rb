@@ -41,6 +41,7 @@ class BulletPhysics < Component
 
       next unless Utils.point_in_poly(x, y, *obj.box)
 
+      obj.health.inflict_damage(20)
       object.target_x = x
       object.target_y = y
       return

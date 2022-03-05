@@ -9,5 +9,20 @@ class Explosion < GameObject
     @y = y
     ExplosionGraphics.new(self)
     ExplosionSounds.play
+    inflict_damage
+  end
+
+  private
+
+  def inflict_damage
+    object_pool.nearby(self, 100).each do |obj|
+      next unless obj.instance_of?(Tank)
+
+      obj.health.inflict_damage(
+        Math.sqrt(3 * 100 - Utils.distance_between(
+          obj.x, obj.y, x, y
+        ))
+      )
+    end
   end
 end
