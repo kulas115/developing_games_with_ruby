@@ -84,7 +84,8 @@ class TankPhysics < Component
     if @speed.positive?
       new_x = x
       new_y = y
-      shift = Utils.adjust_speed(@speed)
+      speed = apply_movement_penalty(@speed)
+      shift = Utils.adjust_speed(speed)
       case @object.direction.to_i
       when 0
         new_y -= shift
@@ -111,8 +112,8 @@ class TankPhysics < Component
         object.x = new_x
         object.y = new_y
       else
-        object.sounds.collide if @speed > 1
-        @speed = 0.0
+        object.sounds.collide if speed > 1
+        speed = 0.0
 
       end
     end
@@ -152,5 +153,9 @@ class TankPhysics < Component
       end
     end
     false
+  end
+
+  def apply_movement_penalty(speed)
+    speed * (1.0 - @map.movement_penalty(x,y))
   end
 end
