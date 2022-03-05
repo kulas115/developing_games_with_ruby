@@ -126,7 +126,7 @@ class TankPhysics < Component
       @speed = 0
     elsif change > 45
       @speed *= 0.33
-    elsif change > 0
+    elsif change.positive?
       @speed *= 0.66
     end
     object.direction = new_direction
@@ -156,6 +156,6 @@ class TankPhysics < Component
   end
 
   def apply_movement_penalty(speed)
-    speed * (1.0 - @map.movement_penalty(x,y))
+    speed * (1.0 - @map.movement_penalty(x, y))
   end
 end
