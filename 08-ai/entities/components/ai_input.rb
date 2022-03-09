@@ -26,13 +26,14 @@ class AiInput < Component
 
   def update
     return if object.health.dead?
+
     @gun.adjust_angle
     now = Gosu.milliseconds
     return if now - @last_update < UPDATE_RATE
+
     @last_update = now
     @vision.update
     @gun.update
     @motion.update
   end
-
 end
