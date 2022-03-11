@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TankMotionState
   def initialize(object, vision)
     @object = object
@@ -60,19 +62,19 @@ class TankMotionState
     end
   end
 
-  def on_collision(with)
+  def on_collision(_with)
     change = case rand(0..100)
-    when 0..30
-      -90
-    when 30..60
-      90
-    when 60..70
-      135
-    when 80..90
-      -135
-    else
-      180
-    end
+             when 0..30
+               -90
+             when 30..60
+               90
+             when 60..70
+               135
+             when 80..90
+               -135
+             else
+               180
+             end
     @object.phycics.change_direction(@object.direction + change)
   end
 end
