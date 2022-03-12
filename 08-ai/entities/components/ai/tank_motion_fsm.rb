@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TankMotionFSM
   STATE_CHANGE_DELAY = 500
 
@@ -16,10 +18,8 @@ class TankMotionFSM
     @current_state.on_collision(with)
   end
 
-  def on_damage(amount)
-    if @current_state == @roaming_state
-      set_state(@fighting_state)
-    end
+  def on_damage(_amount)
+    set_state(@fighting_state) if @current_state == @roaming_state
   end
 
   def update
@@ -30,6 +30,7 @@ class TankMotionFSM
   def set_state(state)
     return unless state
     return if state == @current_state
+
     @last_state_change = Gosu.milliseconds
     @current_state = state
     state.enter
@@ -37,24 +38,23 @@ class TankMotionFSM
 
   def choose_state
     return unless Gosu.milliseconds -
-      (@last_state_change) > STATE_CHANGE_DELAY
-    if @gun.target
-      if @object.health.health > 40
-        if @gun.distance_to_target > BulletPhysics::MAX_DIST
-          new_state = @chasing_state
-        else
-          new_state = @fighting_state
-        end
-      else
-        if @fleeing_state.can_flee?
-          new_state = @fleeing_state
-        else
-          new_state = @fighting_state
-        end
-      end
-    else
-      new_state = @roaming_state
-    end
+                  @last_state_change > STATE_CHANGE_DELAY
+
+    new_state = if @gun.target
+                  if @object.health.health > 40
+                    if @gun.distance_to_target > BulletPhysics::MAX_DIST
+                      @chasing_state
+                    else
+                      @fighting_state
+                    end
+                  elsif @fleeing_state.can_flee?
+                    @fleeing_state
+                  else
+                    @fighting_state
+                  end
+                else
+                  @roaming_state
+                end
     set_state(new_state)
   end
 end
