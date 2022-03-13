@@ -53,16 +53,13 @@ class Camera
   end
 
   def draw_crosshair
+    factor = 0.3
     x = $window.mouse_x
     y = $window.mouse_y
-    $window.draw_line(
-      x - 10, y, Gosu::Color::RED,
-      x + 10, y, Gosu::Color::RED, 100
-    )
-    $window.draw_line(
-      x, y - 10, Gosu::Color::RED,
-      x, y + 10, Gosu::Color::RED, 100
-    )
+    c = crosshair
+    c.draw(x - c.width * factor / 2,
+           y - c.height * factor / 2,
+           1000, factor, factor)
   end
 
   def viewport
@@ -71,5 +68,13 @@ class Camera
     y0 = @y - ($window.height / 2) / @zoom
     y1 = @y + ($window.height / 2) / @zoom
     [x0, x1, y0, y1]
+  end
+
+  private
+
+  def crosshair
+    @crosshair ||= Gosu::Image.new(
+      Utils.media_path('c_dot.png'), tileable: false
+    )
   end
 end
