@@ -46,12 +46,19 @@ class Map
     (x0..x1).each do |x|
       (y0..y1).each do |y|
         row = @map[x]
-        next unless row
-
-        tile = @map[x][y]
         map_x = x * TILE_SIZE
         map_y = y * TILE_SIZE
-        tile&.draw(map_x, map_y, 0)
+        if row
+
+        tile = @map[x][y]
+        if tile
+          tile.draw(map_x, map_y, 0)
+        else
+          @water.draw(map_x, map_y, 0)
+        end
+      else
+        @water.draw(map_x, map_y, 0)
+      end
       end
     end
   end
@@ -62,7 +69,7 @@ class Map
     t_x = ((x / TILE_SIZE) % TILE_SIZE).floor
     t_y = ((y / TILE_SIZE) % TILE_SIZE).floor
     row = @map[t_x]
-    row[t_y] if row
+    row ? row[t_y] : @water
   end
 
   def load_tiles
