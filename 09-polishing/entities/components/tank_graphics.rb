@@ -16,6 +16,7 @@ class TankGraphics < Component
     @body_dead = units.frame('tank1_body_destroyed.png')
     @shadow_dead = units.frame('tank1_body_destroyed_shadow.png')
     @gun_dead = nil
+    update
   end
 
   def update
