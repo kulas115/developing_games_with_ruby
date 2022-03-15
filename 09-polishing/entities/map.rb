@@ -50,15 +50,15 @@ class Map
         map_y = y * TILE_SIZE
         if row
 
-        tile = @map[x][y]
-        if tile
-          tile.draw(map_x, map_y, 0)
+          tile = @map[x][y]
+          if tile
+            tile.draw(map_x, map_y, 0)
+          else
+            @water.draw(map_x, map_y, 0)
+          end
         else
           @water.draw(map_x, map_y, 0)
         end
-      else
-        @water.draw(map_x, map_y, 0)
-      end
       end
     end
   end
