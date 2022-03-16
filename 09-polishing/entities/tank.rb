@@ -3,7 +3,7 @@
 class Tank < GameObject
   SHOOT_DELAY = 500
 
-  attr_accessor :x, :y, :throttle_down, :direction, :gun_angle, :sounds, :physics, :graphics, :health
+  attr_accessor :x, :y, :throttle_down, :direction, :gun_angle, :sounds, :physics, :graphics, :health, :input
 
   def initialize(object_pool, input)
     super(object_pool)
@@ -30,5 +30,20 @@ class Tank < GameObject
 
   def can_shoot?
     Gosu.milliseconds - (@last_shot || 0) > SHOOT_DELAY
+  end
+
+  def on_collision(object)
+    return unless object
+
+    # Avoid recursion
+    if object.instance_of?(Tank)
+      # Inform AI about hit
+      object.input.on_collision(object)
+    else
+      # Call only on non-tanks to avoid recursion
+      object.on_collision(self)
+    end
+    # Bullets should not slow tanks down
+    @sounds.collide if object.class != Bullet && (@physics.speed > 1)
   end
 end

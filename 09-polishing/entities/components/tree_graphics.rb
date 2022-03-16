@@ -21,7 +21,7 @@ class TreeGraphics < Component
 
   def adjust_shake(x, y, shaking_for)
     elapsed = [shaking_for, SHAKE_TIME].min / SHAKE_TIME.to_f
-    frame = ((SHAKE_DISTANCE.lenght - 1) * elapsed).floor
+    frame = ((SHAKE_DISTANCE.length - 1) * elapsed).floor
     distance = SHAKE_DISTANCE[frame]
     Utils.point_at_distance(x, y, @shake_direction, distance)
   end

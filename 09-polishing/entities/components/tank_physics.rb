@@ -19,16 +19,21 @@ class TankPhysics < Component
     return false unless @map.can_move_to?(x, y)
 
     @object_pool.nearby(object, 100).each do |obj|
-      next unless collides_with_poly?(obj.box)
+      next if obj.instance_of?(Bullet) && obj.source == object
 
-      # Allow to get unstuck
-      old_distance = Utils.distance_between(
-        obj.x, obj.y, old_x, old_y
-      )
-      new_distance = Utils.distance_between(
-        obj.x, obj.y, x, y
-      )
-      return false if new_distance < old_distance
+      if collides_with_poly?(obj.box)
+        @collides_with = obj
+        # Allow to get unstuck
+        old_distance = Utils.distance_between(
+          obj.x, obj.y, old_x, old_y
+        )
+        new_distance = Utils.distance_between(
+          obj.x, obj.y, x, y
+        )
+        return false if new_distance < old_distance
+      else
+        @collides_with = nil
+      end
     end
     true
   ensure
@@ -111,10 +116,11 @@ class TankPhysics < Component
       if can_move_to?(new_x, new_y)
         object.x = new_x
         object.y = new_y
+        @in_collision = false
       else
-        object.sounds.collide if speed > 1
-        speed = 0.0
-
+        object.on_collision(@collides_with)
+        @speed = 0.0
+        @in_collision = true
       end
     end
   end

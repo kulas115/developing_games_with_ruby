@@ -6,9 +6,9 @@ class PlayState < GameState
   attr_accessor :update_interval
 
   def initialize
-    @map = Map.new
     @camera = Camera.new
     @object_pool = ObjectPool.new(@map)
+    @map = Map.new(@object_pool)
     @tank = Tank.new(@object_pool, PlayerInput.new(@camera))
     @camera.target = @tank
     50.times do

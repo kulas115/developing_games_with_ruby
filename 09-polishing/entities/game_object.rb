@@ -27,6 +27,8 @@ class GameObject
 
   def box; end
 
+  def on_collision(object); end
+
   def collide; end
 
   protected
