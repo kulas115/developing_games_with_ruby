@@ -11,6 +11,7 @@ class PlayState < GameState
     @map = Map.new(@object_pool)
     @tank = Tank.new(@object_pool, PlayerInput.new(@camera))
     @camera.target = @tank
+    @radar = Radar.new(@object_pool, @tank)
     50.times do
       Tank.new(@object_pool, AiInput.new(@object_pool))
     end
@@ -32,6 +33,7 @@ class PlayState < GameState
     @object_pool.objects.map(&:update)
     @object_pool.objects.reject!(&:removable?)
     @camera.update
+    @radar.update
     update_caption
   end
 
@@ -50,6 +52,7 @@ class PlayState < GameState
       end
     end
     @camera.draw_crosshair
+    @radar.draw
   end
 
   def button_down(id)
