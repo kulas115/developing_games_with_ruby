@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 class ObjectPool
-  attr_accessor :objects, :map
+  attr_accessor :objects, :map, :camera
 
-  def initialize(map)
-    @map = map
+  def initialize
     @objects = []
   end
 

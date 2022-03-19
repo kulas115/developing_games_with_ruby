@@ -7,10 +7,11 @@ class PlayState < GameState
 
   def initialize
     @camera = Camera.new
-    @object_pool = ObjectPool.new(@map)
+    @object_pool = ObjectPool.new
     @map = Map.new(@object_pool)
     @tank = Tank.new(@object_pool, PlayerInput.new(@camera))
     @camera.target = @tank
+    @object_pool.camera = @camera
     @radar = Radar.new(@object_pool, @tank)
     50.times do
       Tank.new(@object_pool, AiInput.new(@object_pool))
@@ -30,6 +31,7 @@ class PlayState < GameState
   end
 
   def update
+    StereoSample.cleanup
     @object_pool.objects.map(&:update)
     @object_pool.objects.reject!(&:removable?)
     @camera.update

@@ -8,7 +8,7 @@ class Explosion < GameObject
     @x = x
     @y = y
     ExplosionGraphics.new(self)
-    ExplosionSounds.play
+    ExplosionSounds.play(self, object_pool.camera)
     inflict_damage
   end
 

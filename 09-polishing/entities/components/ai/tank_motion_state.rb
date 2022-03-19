@@ -75,6 +75,6 @@ class TankMotionState
              else
                180
              end
-    @object.phycics.change_direction(@object.direction + change)
+    @object.physics.change_direction(@object.direction + change)
   end
 end
