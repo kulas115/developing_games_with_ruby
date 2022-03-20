@@ -22,6 +22,15 @@ class TankMotionFSM
     set_state(@fighting_state) if @current_state == @roaming_state
   end
 
+  def draw(_viewport)
+    if $debug
+      @image&.draw(
+        @object.x - @image.width / 2,
+        @object.y + @object.graphics.height / 2 - @image.height, 100
+      )
+    end
+  end
+
   def update
     choose_state
     @current_state.update

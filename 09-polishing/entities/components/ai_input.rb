@@ -2,10 +2,13 @@
 
 class AiInput < Component
   UPDATE_RATE = 200 # ms
+  # Dark Red
+  NAME_COLOR = Gosu::Color.argb(0xeeb10000)
 
-  def initialize(object_pool)
-    @object_pool = object_pool
+  def initialize(name, object_pool)
     super(nil)
+    @object_pool = object_pool
+    @name = name
     @last_update = Gosu.milliseconds
   end
 
@@ -35,5 +38,23 @@ class AiInput < Component
     @vision.update
     @gun.update
     @motion.update
+  end
+
+  def draw(viewport)
+    @motion.draw(viewport)
+    @gun.draw(viewport)
+    @name_image ||= Gosu::Image.from_text(
+      @name, 20, font: Gosu.default_font_name
+    )
+    @name_image.draw(
+      x - @name_image.width / 2 - 1,
+      y + object.graphics.height / 2, 100,
+      1, 1, Gosu::Color::WHITE
+    )
+    @name_image.draw(
+      x - @name_image.width / 2,
+      y + object.graphics.height / 2, 100,
+      1, 1, NAME_COLOR
+    )
   end
 end

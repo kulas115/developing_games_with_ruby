@@ -1,9 +1,14 @@
 # frozen_string_literal: true
 
 class PlayerInput < Component
-  def initialize(camera)
+  # Dark Green
+  NAME_COLOR = Gosu::Color.argb(0xee084408)
+
+  def initialize(name, camera, object_pool)
     super(nil)
+    @name = name
     @camera = camera
+    @object_pool = object_pool
   end
 
   def control(obj)
@@ -27,6 +32,20 @@ class PlayerInput < Component
     end
 
     object.shoot(*@camera.mouse_coords) if Utils.button_down?(Gosu::MsLeft)
+  end
+
+  def draw(_viewport)
+    @name_image ||= Gosu::Image.from_text(@name, 20, font: Gosu.default_font_name)
+    @name_image.draw(
+      x - @name_image.width / 2 - 1,
+      y + object.graphics.height / 2, 100,
+      1, 1, Gosu::Color::WHITE
+    )
+    @name_image.draw(
+      x - @name_image.width / 2,
+      y + object.graphics.height / 2, 100,
+      1, 1, NAME_COLOR
+    )
   end
 
   private

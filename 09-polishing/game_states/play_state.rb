@@ -6,15 +6,16 @@ class PlayState < GameState
   attr_accessor :update_interval
 
   def initialize
+    @names = Names.new(Utils.media_path('names.txt'))
     @camera = Camera.new
     @object_pool = ObjectPool.new
     @map = Map.new(@object_pool)
-    @tank = Tank.new(@object_pool, PlayerInput.new(@camera))
+    @tank = Tank.new(@object_pool, PlayerInput.new('Player', @camera, @object_pool))
     @camera.target = @tank
     @object_pool.camera = @camera
     @radar = Radar.new(@object_pool, @tank)
     50.times do
-      Tank.new(@object_pool, AiInput.new(@object_pool))
+      Tank.new(@object_pool, AiInput.new(@names.random, @object_pool))
     end
   end
 
