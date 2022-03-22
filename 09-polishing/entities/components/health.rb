@@ -41,6 +41,11 @@ class Health < Component
     )
   end
 
+  def restore
+    @health = @initial_health
+    @health_updated = true
+  end
+
   protected
 
   def draw?

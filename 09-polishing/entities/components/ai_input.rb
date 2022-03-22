@@ -28,7 +28,7 @@ class AiInput < Component
   end
 
   def update
-    return if object.health.dead?
+    return respawn if object.health.dead?
 
     @gun.adjust_angle
     now = Gosu.milliseconds
@@ -56,5 +56,15 @@ class AiInput < Component
       y + object.graphics.height / 2, 100,
       1, 1, NAME_COLOR
     )
+  end
+
+  private
+
+  def respawn
+    if object.health.should_respawn?
+      object.health.restore
+      object.x, object.y = @object_pool.map.spawn_point
+      PlayerSounds.respawn(object, @object_pool.camera)
+    end
   end
 end

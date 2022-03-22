@@ -10,11 +10,12 @@ class PlayState < GameState
     @camera = Camera.new
     @object_pool = ObjectPool.new
     @map = Map.new(@object_pool)
+    @map.spawn_points(15)
     @tank = Tank.new(@object_pool, PlayerInput.new('Player', @camera, @object_pool))
     @camera.target = @tank
     @object_pool.camera = @camera
     @radar = Radar.new(@object_pool, @tank)
-    50.times do
+    20.times do
       Tank.new(@object_pool, AiInput.new(@names.random, @object_pool))
     end
   end

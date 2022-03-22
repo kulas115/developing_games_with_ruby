@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PlayerInput < Component
-  # Dark Green
+  # Dark green
   NAME_COLOR = Gosu::Color.argb(0xee084408)
 
   def initialize(name, camera, object_pool)
@@ -13,11 +13,17 @@ class PlayerInput < Component
 
   def control(obj)
     self.object = obj
+    obj.components << self
   end
 
-  def update
-    return if object.health.dead?
+  def on_collision(with); end
 
+  def on_damage(amount); end
+
+  def update
+    return respawn if object.health.dead?
+
+    # require 'pry'; binding.pry
     d_x, d_y = @camera.target_delta_on_screen
     atan = Math.atan2(($window.width / 2) - d_x - $window.mouse_x,
                       ($window.height / 2) - d_y - $window.mouse_y)
@@ -26,7 +32,9 @@ class PlayerInput < Component
 
     if any_button_down?(*motion_buttons)
       object.throttle_down = true
-      object.physics.change_direction(change_angle(object.direction, *motion_buttons))
+      object.physics.change_direction(
+        change_angle(object.direction, *motion_buttons)
+      )
     else
       object.throttle_down = false
     end
@@ -35,7 +43,9 @@ class PlayerInput < Component
   end
 
   def draw(_viewport)
-    @name_image ||= Gosu::Image.from_text(@name, 20, font: Gosu.default_font_name)
+    @name_image ||= Gosu::Image.from_text(
+      $window, @name, Gosu.default_font_name, 20
+    )
     @name_image.draw(
       x - @name_image.width / 2 - 1,
       y + object.graphics.height / 2, 100,
@@ -49,6 +59,16 @@ class PlayerInput < Component
   end
 
   private
+
+  def respawn
+    if object.health.should_respawn?
+      object.health.restore
+      object.x, object.y = @object_pool.map.spawn_point
+      @camera.x = x
+      @camera.y = y
+      PlayerSounds.respawn(object, @camera)
+    end
+  end
 
   def any_button_down?(*buttons)
     buttons.each do |b|
