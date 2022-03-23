@@ -22,6 +22,10 @@ class Tank < GameObject
     @physics.box
   end
 
+  def effect?
+    false
+  end
+
   def shoot(target_x, target_y)
     if Gosu.milliseconds - (@last_shot || 0) > SHOOT_DELAY
       @last_shot = Gosu.milliseconds

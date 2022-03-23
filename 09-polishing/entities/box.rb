@@ -31,4 +31,8 @@ class Box < GameObject
             x - w + 4, y + h]
     @box = Utils.rotate(@angle, @x, @y, *@box)
   end
+
+  def effect?
+    false
+  end
 end

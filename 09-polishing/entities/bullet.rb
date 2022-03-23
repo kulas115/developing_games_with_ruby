@@ -28,4 +28,8 @@ class Bullet < GameObject
     @speed = speed
     @fired_at = Gosu.milliseconds
   end
+
+  def effect?
+    false
+  end
 end

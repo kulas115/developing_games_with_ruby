@@ -10,6 +10,11 @@ class Explosion < GameObject
     ExplosionGraphics.new(self)
     ExplosionSounds.play(self, object_pool.camera)
     inflict_damage
+    Damage.new(@object_pool, @x, @y) if @object_pool.map.can_move_to?(x, y)
+  end
+
+  def effect?
+    true
   end
 
   private
