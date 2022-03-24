@@ -23,7 +23,7 @@ class Bullet < GameObject
     mark_for_removal
   end
 
-  def fire(speed)
+  def fire(source, speed)
     @source = source
     @speed = speed
     @fired_at = Gosu.milliseconds
