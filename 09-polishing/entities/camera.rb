@@ -21,11 +21,36 @@ class Camera
   end
 
   def update
-    shift = Utils.adjust_speed(@target.physics.speed)
-    @x += shift if @x < @target.x - $window.width / 4
-    @x -= shift if @x > @target.x + $window.width / 4
-    @y += shift if @y < @target.y - $window.height / 4
-    @y -= shift if @y > @target.y + $window.height / 4
+    des_x, des_y = desired_spot
+    shift = Utils.adjust_speed(
+      @target.physics.speed
+    ).floor + 1
+    if @x < des_x
+      if des_x - @x < shift
+        @x = des_x
+      else
+        @x += shift
+      end
+    elsif @x > des_x
+      if @x - des_x < shift
+        @x = des_x
+      else
+        @x -= shift
+      end
+    end
+    if @y < des_y
+      if des_y - @y < shift
+        @y = des_y
+      else
+        @y += shift
+      end
+    elsif @y > des_y
+      if @y - des_y < shift
+        @y = des_y
+      else
+        @y -= shift
+      end
+    end
 
     zoom_delta = @zoom.positive? ? 0.01 : 1.0
     zoom_delta = Utils.adjust_speed(zoom_delta)
@@ -34,12 +59,24 @@ class Camera
     elsif $window.button_down?(Gosu::KbDown)
       @zoom += zoom_delta unless @zoom > 10
     else
-      target_zoom = @target.physics.speed > 1.1 ? 0.85 : 1.0
+      target_zoom = @target.physics.speed > 1.1 ? 0.75 : 1.0
       if @zoom <= (target_zoom - 0.01)
         @zoom += zoom_delta / 3
       elsif @zoom > (target_zoom + 0.01)
         @zoom -= zoom_delta / 3
       end
+    end
+  end
+
+  def desired_spot
+    if @target.physics.moving?
+      Utils.point_at_distance(
+        @target.x, @target.y,
+        @target.direction,
+        @target.physics.speed.ceil * 25
+      )
+    else
+      [@target.x, @target.y]
     end
   end
 
