@@ -14,7 +14,7 @@ class QuadTree
       game_object.location
     )
 
-    if @object.size < NODE_CAPACITY
+    if @objects.size < NODE_CAPACITY
       @objects << game_object
       return true
     end
@@ -34,9 +34,7 @@ class QuadTree
     return false unless @boundary.contains?(
       game_object.location
     )
-
     return true if @objects.delete(game_object)
-
     return false unless @nw
     return true if @nw.remove(game_object)
     return true if @ne.remove(game_object)
@@ -54,7 +52,7 @@ class QuadTree
       result << o if range.contains?(o.location)
     end
 
-    # not subdivided
+    # Not subdivided
     return result unless @ne
 
     result += @nw.query_range(range)
@@ -72,7 +70,6 @@ class QuadTree
     hx, hy = @boundary.half_dimension
     hhx = (cx - hx).abs / 2.0
     hhy = (cy - hy).abs / 2.0
-
     @nw = QuadTree.new(
       AxisAlignedBoundingBox.new(
         [cx - hhx, cy - hhy],

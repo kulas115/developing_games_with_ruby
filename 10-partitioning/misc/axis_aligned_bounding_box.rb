@@ -10,7 +10,7 @@ class AxisAlignedBoundingBox
     @dhy = (@half_dimension[1] - @center[1]).abs
   end
 
-  def contains(point)
+  def contains?(point)
     return false unless (@center[0] + @dhx) >= point[0]
     return false unless (@center[0] - @dhx) <= point[0]
     return false unless (@center[1] + @dhy) >= point[1]
@@ -20,7 +20,7 @@ class AxisAlignedBoundingBox
   end
 
   def intersects?(other)
-    oxc, ocy = other.center
+    ocx, ocy = other.center
     ohx, ohy = other.half_dimension
     odhx = (ohx - ocx).abs
     return false unless (@center[0] + @dhx) >= (ocx - odhx)
