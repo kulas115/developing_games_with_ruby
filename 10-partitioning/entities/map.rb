@@ -8,6 +8,14 @@ class Map
   MAP_HEIGHT = 100
   TILE_SIZE = 128
 
+  def self.bounding_box
+    center = [MAP_WIDTH * TILE_SIZE / 2,
+              MAP_HEIGHT * TILE_SIZE / 2]
+    half_dimension = [MAP_WIDTH * TILE_SIZE,
+                      MAP_HEIGHT * TILE_SIZE]
+    AxisAlignedBoundingBox.new(center, half_dimension)
+  end
+
   def initialize(object_pool)
     load_tiles
     @object_pool = object_pool

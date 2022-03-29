@@ -63,7 +63,7 @@ class PlayerInput < Component
   def respawn
     if object.health.should_respawn?
       object.health.restore
-      object.x, object.y = @object_pool.map.spawn_point
+      object.move(*@object_pool.map.spawn_point)
       @camera.x = x
       @camera.y = y
       PlayerSounds.respawn(object, @camera)

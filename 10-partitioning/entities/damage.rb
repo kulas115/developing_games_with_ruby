@@ -1,17 +1,13 @@
 # frozen_string_literal: true
 
 class Damage < GameObject
-  MAX_INSTANCES = 100
-
-  attr_accessor :x, :y
+  MAX_INSTANCES = 300
 
   @@instances = []
 
   def initialize(object_pool, x, y)
-    super(object_pool)
+    super
     DamageGraphics.new(self)
-    @x = x
-    @y = y
     track(self)
   end
 

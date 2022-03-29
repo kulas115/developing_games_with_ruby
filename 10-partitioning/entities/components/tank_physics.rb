@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class TankPhysics < Component
-  attr_accessor :speed
+  attr_accessor :speed, :in_collision, :collides_with
 
   def initialize(game_object, object_pool)
     super(game_object)
@@ -13,8 +13,7 @@ class TankPhysics < Component
   def can_move_to?(x, y)
     old_x = object.x
     old_y = object.y
-    object.x = x
-    object.y = y
+    object.move(x, y)
     return false unless @map.can_move_to?(x, y)
 
     @object_pool.nearby(object, 100).each do |obj|
@@ -36,8 +35,7 @@ class TankPhysics < Component
     end
     true
   ensure
-    object.x = old_x
-    object.y = old_y
+    object.move(old_x, old_y)
   end
 
   def moving?
@@ -113,8 +111,7 @@ class TankPhysics < Component
         new_y -= shift
       end
       if can_move_to?(new_x, new_y)
-        object.x = new_x
-        object.y = new_y
+        object.move(new_x, new_y)
         @in_collision = false
       else
         object.on_collision(@collides_with)

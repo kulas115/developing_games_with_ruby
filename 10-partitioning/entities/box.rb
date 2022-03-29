@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class Box < GameObject
-  attr_reader :x, :y, :health, :graphics, :angle
+  attr_reader :health, :graphics, :angle
 
   def initialize(object_pool, x, y)
-    super(object_pool)
-    @x = x
-    @y = y
+    super
     @graphics = BoxGraphics.new(self)
     @health = Health.new(self, object_pool, 10, true)
     @angle = rand(-15..15)
