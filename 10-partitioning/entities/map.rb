@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
-require 'perlin_noise'
-require 'gosu_texture_packer'
-
 class Map
-  MAP_WIDTH = 100
-  MAP_HEIGHT = 100
+  MAP_WIDTH = 30
+  MAP_HEIGHT = 30
   TILE_SIZE = 128
 
   def self.bounding_box
@@ -33,7 +30,6 @@ class Map
   end
 
   def spawn_point
-    # require 'pry'; binding.pry
     @spawn_points[(@spawn_points_pointer += 1) % @spawn_points.size]
   end
 
@@ -53,15 +49,14 @@ class Map
   end
 
   def draw(viewport)
-    viewport.map! { |p| p / TILE_SIZE }
+    viewport = viewport.map { |p| p / TILE_SIZE }
     x0, x1, y0, y1 = viewport.map(&:to_i)
-    (x0..x1).each do |x|
-      (y0..y1).each do |y|
+    (x0 - 1..x1).each do |x|
+      (y0 - 1..y1).each do |y|
         row = @map[x]
         map_x = x * TILE_SIZE
         map_y = y * TILE_SIZE
         if row
-
           tile = @map[x][y]
           if tile
             tile.draw(map_x, map_y, 0)
@@ -75,51 +70,7 @@ class Map
     end
   end
 
-  def generate_trees
-    noises = Perlin::Noise.new(2)
-    contrast = Perlin::Curve.contrast(
-      Perlin::Curve::CUBIC, 2
-    )
-    trees = 0
-    target_trees = rand(300..500)
-    while trees < target_trees
-      x = rand(0..MAP_WIDTH * TILE_SIZE)
-      y = rand(0..MAP_HEIGHT * TILE_SIZE)
-      n = noises[x * 0.001, y * 0.001]
-      n = contrast.call(n)
-      if tile_at(x, y) == @grass && n > 0.5
-        Tree.new(@object_pool, x, y, n * 2 - 1)
-        trees += 1
-      end
-    end
-  end
-
-  def generate_boxes
-    boxes = 0
-    target_boxes = rand(10..30)
-    while boxes < target_boxes
-      x = rand(0..MAP_WIDTH * TILE_SIZE)
-      y = rand(0..MAP_HEIGHT * TILE_SIZE)
-      if tile_at(x, y) != @water
-        Box.new(@object_pool, x, y)
-        boxes += 1
-      end
-    end
-  end
-
   private
-
-  def find_spawn_point
-    loop do
-      x = rand(0..MAP_WIDTH * TILE_SIZE)
-      y = rand(0..MAP_HEIGHT * TILE_SIZE)
-      if can_move_to?(x, y)
-        return [x, y]
-      else
-        puts "Invalid spawn point: #{[x, y]}"
-      end
-    end
-  end
 
   def tile_at(x, y)
     t_x = ((x / TILE_SIZE) % TILE_SIZE).floor
@@ -157,14 +108,58 @@ class Map
     map
   end
 
+  def generate_trees
+    noises = Perlin::Noise.new(2)
+    contrast = Perlin::Curve.contrast(
+      Perlin::Curve::CUBIC, 2
+    )
+    trees = 0
+    target_trees = rand(1500..1500)
+    while trees < target_trees
+      x = rand(0..MAP_WIDTH * TILE_SIZE)
+      y = rand(0..MAP_HEIGHT * TILE_SIZE)
+      n = noises[x * 0.001, y * 0.001]
+      n = contrast.call(n)
+      if tile_at(x, y) == @grass && n > 0.5
+        Tree.new(@object_pool, x, y, n * 2 - 1)
+        trees += 1
+      end
+    end
+  end
+
+  def generate_boxes
+    boxes = 0
+    target_boxes = rand(50..200)
+    while boxes < target_boxes
+      x = rand(0..MAP_WIDTH * TILE_SIZE)
+      y = rand(0..MAP_HEIGHT * TILE_SIZE)
+      if tile_at(x, y) != @water
+        Box.new(@object_pool, x, y)
+        boxes += 1
+      end
+    end
+  end
+
   def choose_tile(val)
     case val
     when 0.0..0.3 # 30% chance
       @water
-    when 0.3..0.45 # 15% chance, water edges
+    when 0.3..0.5 # 20% chance, water edges
       @sand
-    else # 55% chance
+    else # 50% chance
       @grass
+    end
+  end
+
+  def find_spawn_point
+    loop do
+      x = rand(0..MAP_WIDTH * TILE_SIZE)
+      y = rand(0..MAP_HEIGHT * TILE_SIZE)
+      if can_move_to?(x, y)
+        return [x, y]
+      else
+        puts "Invalid spawn point: #{[x, y]}"
+      end
     end
   end
 end

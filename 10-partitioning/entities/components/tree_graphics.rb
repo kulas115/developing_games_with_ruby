@@ -4,7 +4,6 @@ class TreeGraphics < Component
   SHAKE_TIME = 100
   SHAKE_COOLDOWN = 200
   SHAKE_DISTANCE = [2, 1, 0, -1, -2, -1, 0, 1, 0, -1, 0].freeze
-
   def initialize(object, seed)
     super(object)
     load_sprite(seed)
@@ -12,7 +11,8 @@ class TreeGraphics < Component
 
   def shake(direction)
     now = Gosu.milliseconds
-    return if @shake_start && now - @shake_start < SHAKE_TIME + SHAKE_COOLDOWN
+    return if @shake_start &&
+              now - @shake_start < SHAKE_TIME + SHAKE_COOLDOWN
 
     @shake_start = now
     @shake_direction = direction
@@ -65,6 +65,6 @@ class TreeGraphics < Component
   end
 
   def trees
-    @@trees ||= Gosu::TexturePacker.load_json(Utils.media_path('trees_packed.json'), :precise)
+    @@trees ||= Gosu::TexturePacker.load_json(Utils.media_path('trees_packed.json'))
   end
 end

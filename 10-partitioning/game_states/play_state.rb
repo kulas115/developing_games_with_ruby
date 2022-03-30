@@ -1,35 +1,28 @@
 # frozen_string_literal: true
 
-require 'ruby-prof' if ENV['ENABLE_PROFILING']
-
 class PlayState < GameState
   attr_accessor :update_interval
 
   def initialize
-    @names = Names.new(Utils.media_path('names.txt'))
-    @camera = Camera.new
+    # http://www.paulandstorm.com/wha/clown-names/
+    @names = Names.new(
+      Utils.media_path('names.txt')
+    )
     @object_pool = ObjectPool.new(Map.bounding_box)
     @map = Map.new(@object_pool)
-    @map.spawn_points(15)
-    @tank = Tank.new(@object_pool, PlayerInput.new('Player', @camera, @object_pool))
+    @map.spawn_points(100)
+    @camera = Camera.new
+    @tank = Tank.new(@object_pool,
+                     PlayerInput.new('Player', @camera, @object_pool))
     @camera.target = @tank
     @object_pool.camera = @camera
     @radar = Radar.new(@object_pool, @tank)
-    20.times do
-      Tank.new(@object_pool, AiInput.new(@names.random, @object_pool))
+    30.times do |_i|
+      Tank.new(@object_pool, AiInput.new(
+                               @names.random, @object_pool
+                             ))
     end
-  end
-
-  def enter
-    RubyProf.start if ENV['ENABLE_PROFILING']
-  end
-
-  def leave
-    if ENV['ENABLE_PROFILING']
-      result = RubyProf.stop
-      printer = RubyProf::FlatPrinter.new(result)
-      printer.print($stdout)
-    end
+    puts "Pool size: #{@object_pool.size}"
   end
 
   def update
@@ -43,16 +36,14 @@ class PlayState < GameState
   def draw
     cam_x = @camera.x
     cam_y = @camera.y
-    off_x = $window.width / 2 - cam_x
-    off_y = $window.height / 2 - cam_y
+    off_x =  $window.width / 2 - cam_x
+    off_y =  $window.height / 2 - cam_y
     viewport = @camera.viewport
     x1, x2, y1, y2 = viewport
-
     box = AxisAlignedBoundingBox.new(
       [x1 + (x2 - x1) / 2, y1 + (y2 - y1) / 2],
       [x1 - Map::TILE_SIZE, y1 - Map::TILE_SIZE]
     )
-
     $window.translate(off_x, off_y) do
       zoom = @camera.zoom
       $window.scale(zoom, zoom, cam_x, cam_y) do
@@ -71,14 +62,43 @@ class PlayState < GameState
       leave
       $window.close
     end
+    GameState.switch(MenuState.instance) if id == Gosu::KbEscape
     if id == Gosu::KbT
-      t = Tank.new(@object_pool, AiInput.new(@object_pool))
+      t = Tank.new(@object_pool,
+                   AiInput.new(@names.random, @object_pool))
       t.x, t.y = @camera.mouse_coords
     end
-    GameState.switch(MenuState.instance) if id == Gosu::KbEscape
+    $debug = !$debug if id == Gosu::KbF1
+    toggle_profiling if id == Gosu::KbF2
+    if id == Gosu::KbR
+      @tank.mark_for_removal
+      @tank = Tank.new(@object_pool,
+                       PlayerInput.new('Player', @camera, @object_pool))
+      @camera.target = @tank
+      @radar.target = @tank
+    end
+  end
+
+  def leave
+    StereoSample.stop_all
+    toggle_profiling if @profiling_now
+    puts "Pool: #{@object_pool.size}"
   end
 
   private
+
+  def toggle_profiling
+    require 'ruby-prof' unless defined?(RubyProf)
+    if @profiling_now
+      result = RubyProf.stop
+      printer = RubyProf::FlatPrinter.new(result)
+      printer.print($stdout, min_percent: 0.01)
+      @profiling_now = false
+    else
+      RubyProf.start
+      @profiling_now = true
+    end
+  end
 
   def update_caption
     now = Gosu.milliseconds
@@ -86,7 +106,7 @@ class PlayState < GameState
       $window.caption = 'Tanks Prototype. ' \
                         "[FPS: #{Gosu.fps}. " \
                         "Tank @ #{@tank.x.round}:#{@tank.y.round}]"
-
+      @caption_updated_at = now
     end
   end
 end

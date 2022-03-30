@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Tree < GameObject
-  attr_reader :x, :y, :health, :graphics
+  attr_reader :health, :graphics
 
   def initialize(object_pool, x, y, seed)
     super(object_pool, x, y)
@@ -15,10 +15,6 @@ class Tree < GameObject
   end
 
   def box
-    [x, y]
-  end
-
-  def effect?
-    false
+    [@x, @y]
   end
 end

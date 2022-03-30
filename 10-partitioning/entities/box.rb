@@ -13,7 +13,7 @@ class Box < GameObject
   def on_collision(object)
     return unless object.physics.speed > 1.0
 
-    @x, @y = Utils.point_at_distance(@x, @y, object.direction, 2)
+    move(*Utils.point_at_distance(@x, @y, object.direction, 2))
     @box = nil
   end
 
@@ -23,14 +23,10 @@ class Box < GameObject
     w = @graphics.width / 2
     h = @graphics.height / 2
     # Bounding box adjusted to trim shadows
-    @box = [x - w + 4, y - h + 8,
+    @box = [x - w + 4,     y - h + 8,
             x + w, y - h + 8,
             x + w, y + h,
             x - w + 4, y + h]
     @box = Utils.rotate(@angle, @x, @y, *@box)
-  end
-
-  def effect?
-    false
   end
 end

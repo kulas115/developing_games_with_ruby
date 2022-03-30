@@ -38,6 +38,19 @@ class TankPhysics < Component
     object.move(old_x, old_y)
   end
 
+  def change_direction(new_direction)
+    change = (new_direction - object.direction + 360) % 360
+    change = 360 - change if change > 180
+    if change > 90
+      @speed = 0
+    elsif change > 45
+      @speed *= 0.33
+    elsif change.positive?
+      @speed *= 0.66
+    end
+    object.direction = new_direction % 360
+  end
+
   def moving?
     @speed.positive?
   end
@@ -79,7 +92,7 @@ class TankPhysics < Component
 
   def update
     if object.throttle_down && !object.health.dead?
-      accelarate
+      accelerate
     else
       decelerate
     end
@@ -121,32 +134,35 @@ class TankPhysics < Component
     end
   end
 
-  def change_direction(new_direction)
-    change = (new_direction - object.direction + 360) % 360
-    change = 360 - change if change > 180
-    if change > 90
-      @speed = 0
-    elsif change > 45
-      @speed *= 0.33
-    elsif change.positive?
-      @speed *= 0.66
-    end
-    object.direction = new_direction
-  end
-
   private
 
-  def accelarate
+  def apply_movement_penalty(speed)
+    speed * (1.0 - @map.movement_penalty(x, y))
+  end
+
+  def accelerate
     @speed += 0.08 if @speed < 5
   end
 
   def decelerate
-    @speed -= 0.5 if @speed.positive?
-    @speed = 0.0 if @speed < 0.01 # damp
+    if @speed.positive?
+      @speed = [@speed - 0.5, 0].max
+    elsif @speed.negative?
+      @speed = [@speed + 0.5, 0].min
+    end
+    damp_speed
+  end
+
+  def damp_speed
+    @speed = 0 if @speed < 0.01
   end
 
   def collides_with_poly?(poly)
     if poly
+      if poly.size == 2
+        px, py = poly
+        return Utils.point_in_poly(px, py, *box)
+      end
       poly.each_slice(2) do |x, y|
         return true if Utils.point_in_poly(x, y, *box)
       end
@@ -157,7 +173,7 @@ class TankPhysics < Component
     false
   end
 
-  def apply_movement_penalty(speed)
-    speed * (1.0 - @map.movement_penalty(x, y))
+  def collides_with_point?(x, y)
+    Utils.point_in_poly(x, y, box)
   end
 end
