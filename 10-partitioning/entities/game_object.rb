@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
 class GameObject
+  attr_reader :x, :y, :location, :components
+
   def initialize(object_pool, x, y)
     @x = x
     @y = y
     @location = [x, y]
     @components = []
     @object_pool = object_pool
-    @object_pool.objects << self
+    @object_pool.add(self)
   end
 
-  attr_reader :x, :y, :location, :components
-
   def move(new_x, new_y)
-    return if new_x == @x && new_y && @y
+    return if new_x == @x && new_y == @y
 
     @object_pool.tree_remove(self)
     @x = new_x
@@ -38,9 +38,13 @@ class GameObject
     @removable = true
   end
 
-  def box; end
-
   def on_collision(object); end
+
+  def effect?
+    false
+  end
+
+  def box; end
 
   def collide; end
 
