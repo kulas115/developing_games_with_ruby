@@ -4,7 +4,9 @@ class GameWindow < Gosu::Window
   attr_accessor :state
 
   def initialize
-    super(800, 600, false)
+    super((ENV['w'] || 800).to_i,
+          (ENV['h'] || 600).to_i,
+          (ENV['fs'] ? true : false))
   end
 
   def update
@@ -16,15 +18,15 @@ class GameWindow < Gosu::Window
     @state.draw
   end
 
-  def need_redraw?
+  def needs_redraw?
     @state.needs_redraw?
-  end
-
-  def button_down(id)
-    @state.button_down(id)
   end
 
   def needs_cursor?
     Utils.update_interval > 200
+  end
+
+  def button_down(id)
+    @state.button_down(id)
   end
 end
