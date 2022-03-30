@@ -37,13 +37,9 @@ class Health < Component
 
     @image&.draw(
       x - @image.width / 2,
-      y - object.graphics.height / 2 - @image.height, 100
+      y - object.graphics.height / 2 -
+        @image.height, 100
     )
-  end
-
-  def restore
-    @health = @initial_health
-    @health_updated = true
   end
 
   protected
@@ -59,22 +55,19 @@ class Health < Component
       text = @health.to_s
       font_size = 18
       @image = Gosu::Image.from_text(
-        text, font_size, font: Gosu.default_font_name
+        text,
+        font_size, font: Gosu.default_font_name
       )
+      @health_updated = false
     end
   end
 
   def after_death
     if @explodes
-      if Thread.list.count < 8
-        Thread.new do
-          sleep(rand(0.1..0.3))
-          Explosion.new(@object_pool, x, y)
-          sleep 0.3
-          object.mark_for_removal
-        end
-      else
+      Thread.new do
+        sleep(rand(0.1..0.3))
         Explosion.new(@object_pool, x, y)
+        sleep 0.3
         object.mark_for_removal
       end
     else
