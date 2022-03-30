@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 
 require 'gosu'
+require 'gosu_texture_packer'
+require 'perlin_noise'
 
 root_dir = File.dirname(__FILE__)
 require_pattern = File.join(root_dir, '**/*.rb')
@@ -9,6 +11,7 @@ require_pattern = File.join(root_dir, '**/*.rb')
 
 # Dynamically require everything
 Dir.glob(require_pattern).each do |f|
+  next if f.end_with?('_spec.rb')
   next if f.end_with?('/main.rb')
 
   begin
@@ -24,6 +27,7 @@ end
   require_relative f.gsub("#{root_dir}/", '')
 end
 
+$debug = false
 $window = GameWindow.new
 GameState.switch(MenuState.instance)
 $window.show
