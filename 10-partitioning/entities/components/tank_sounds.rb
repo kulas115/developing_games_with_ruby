@@ -41,7 +41,7 @@ class TankSounds < Component
 
   def crash_sound
     @@crash_sound ||= StereoSample.new(
-      Utils.media_path('crash.ogg')
+      Utils.media_path('metal_interaction2.wav')
     )
   end
 end

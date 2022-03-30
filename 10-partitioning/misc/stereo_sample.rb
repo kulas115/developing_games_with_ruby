@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class StereoSample
+  MAX_POLIPHONY = 16
   @@all_instances = []
 
   def self.register_instances(instances)
@@ -11,6 +12,14 @@ class StereoSample
     @@all_instances.each do |instances|
       instances.each do |key, instance|
         instances.delete(key) unless instance.playing? || instance.paused?
+      end
+    end
+  end
+
+  def self.stop_all
+    @@all_instances.each do |instances|
+      instances.each do |_key, instance|
+        instance.stop if instance.playing?
       end
     end
   end
@@ -43,6 +52,8 @@ class StereoSample
 
   def play(id = :default, pan = 0,
            volume = 1, speed = 1, looping = false)
+    return if @instances.size > MAX_POLIPHONY
+
     @instances["#{id}_l"] = @sound_l.play_pan(
       -0.2, 0, speed, looping
     )
@@ -68,6 +79,8 @@ class StereoSample
   end
 
   def volume_and_pan(id, volume, pan)
+    return unless @instances["#{id}_l"]
+
     if pan.positive?
       pan_l = 1 - pan * 2
       pan_r = 1

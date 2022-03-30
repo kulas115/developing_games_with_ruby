@@ -9,11 +9,11 @@ class Bullet < GameObject
     @target_y = target_y
     BulletPhysics.new(self, object_pool)
     BulletGraphics.new(self)
-    BulletSounds.play
+    BulletSounds.play(self, object_pool.camera)
   end
 
   def box
-    [x, y]
+    [@x, @y]
   end
 
   def explode
@@ -25,9 +25,5 @@ class Bullet < GameObject
     @source = source
     @speed = speed
     @fired_at = Gosu.milliseconds
-  end
-
-  def effect?
-    false
   end
 end
