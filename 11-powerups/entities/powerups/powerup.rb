@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Powerup < GameObject
   def initialize(object_pool, x, y)
     super
