@@ -19,6 +19,7 @@ class TankHealth < Health
   end
 
   def after_death
+    object.reset_modifiers
     @death_time = Gosu.milliseconds
     Thread.new do
       sleep(rand(0.1..0.3))
