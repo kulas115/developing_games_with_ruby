@@ -3,7 +3,7 @@
 class Tank < GameObject
   SHOOT_DELAY = 500
   attr_accessor :throttle_down, :direction, :gun_angle, :sounds, :physics,
-                :graphics, :health, :input, :fire_rate_modifier
+                :graphics, :health, :input, :fire_rate_modifier, :speed_modifier
 
   def initialize(object_pool, input)
     x, y = object_pool.map.spawn_point
@@ -50,6 +50,7 @@ class Tank < GameObject
 
   def reset_modifiers
     @fire_rate_modifier = 1
+    @speed_modifier = 1
   end
 
   def to_s

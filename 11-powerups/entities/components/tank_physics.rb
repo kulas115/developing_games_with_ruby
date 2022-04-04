@@ -100,7 +100,7 @@ class TankPhysics < Component
       new_x = x
       new_y = y
       speed = apply_movement_penalty(@speed)
-      shift = Utils.adjust_speed(speed)
+      shift = Utils.adjust_speed(speed) * object.speed_modifier
       case @object.direction.to_i
       when 0
         new_y -= shift
