@@ -39,17 +39,22 @@ class BulletPhysics < Component
   private
 
   def check_hit
-    # require 'pry'; binding.pry
     @object_pool.nearby(object, 50).each do |obj|
       next if obj == object.source # Don't hit source tank
 
-      next unless Utils.point_in_poly(x, y, *obj.box)
-
-      obj.health.inflict_damage(20)
-      object.target_x = x
-      object.target_y = y
-      return
+      if obj.instance_of?(Tree)
+        return do_hit(obj) if Utils.distance_between(x, y, obj.x, obj.y) < 10 && obj.respond_to?(:health)
+      elsif Utils.point_in_poly(x, y, *obj.box)
+        # Direct hit - extra damage
+        return do_hit(obj) if obj.respond_to?(:health)
+      end
     end
+  end
+
+  def do_hit(obj)
+    obj.health.inflict_damage(20)
+    object.target_x = x
+    object.target_y = y
   end
 
   def arrived?
