@@ -13,7 +13,7 @@ class Powerup < GameObject
      x - 8, y + 8]
   end
 
-  def on_collicion(object)
+  def on_collision(object)
     if pickup(object)
       PowerupSounds.play(object, object_pool.camera)
       remove
