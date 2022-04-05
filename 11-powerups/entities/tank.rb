@@ -16,6 +16,7 @@ class Tank < GameObject
     @graphics = TankGraphics.new(self)
     @direction = rand(0..7) * 45
     @gun_angle = rand(0..360)
+    reset_modifiers
   end
 
   def box
