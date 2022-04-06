@@ -44,7 +44,7 @@ class AiInput < Component
     @motion.draw(viewport)
     @gun.draw(viewport)
     @name_image ||= Gosu::Image.from_text(
-      @name, 20, font: Gosu.default_font_name
+      @name, 20, font: Utils.main_font
     )
     @name_image.draw(
       x - @name_image.width / 2 - 1,

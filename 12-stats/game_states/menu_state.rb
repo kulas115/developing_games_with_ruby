@@ -9,7 +9,7 @@ class MenuState < GameState
   def initialize
     @message = Gosu::Image.from_text(
       'Tank Prototype', 100,
-      font: Gosu.default_font_name
+      font: Utils.main_font
     )
   end
 
@@ -33,7 +33,7 @@ class MenuState < GameState
     continue_text = @play_state ? 'C = Continue, ' : ''
     @info = Gosu::Image.from_text(
       "Q = Quit, #{continue_text}N = New Game", 30,
-      font: Gosu.default_font_name
+      font: Utils.main_font
     )
   end
 

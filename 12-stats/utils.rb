@@ -120,4 +120,13 @@ module Utils
   def self.volume_and_pan(object, camera)
     [volume(object, camera), pan(object, camera)]
   end
+
+  def self.title_font
+    media_path('top_secret.ttf')
+  end
+
+  def self.main_font
+    media_path('armalite_rifle.ttf')
+  end
+
 end
