@@ -16,12 +16,12 @@ class PlayState < GameState
                      PlayerInput.new('Player', @camera, @object_pool))
     @camera.target = @tank
     @object_pool.camera = @camera
-    @radar = Radar.new(@object_pool, @tank)
     30.times do |_i|
       Tank.new(@object_pool, AiInput.new(
                                @names.random, @object_pool
                              ))
     end
+    @hud = HUD.new(@object_pool, @tank)
     puts "Pool size: #{@object_pool.size}"
   end
 
@@ -29,7 +29,7 @@ class PlayState < GameState
     StereoSample.cleanup
     @object_pool.update_all
     @camera.update
-    @radar.update
+    @hud.update
     update_caption
   end
 
@@ -53,8 +53,7 @@ class PlayState < GameState
         end
       end
     end
-    @camera.draw_crosshair
-    @radar.draw
+    @hud.draw
   end
 
   def button_down(id)
@@ -75,14 +74,19 @@ class PlayState < GameState
       @tank = Tank.new(@object_pool,
                        PlayerInput.new('Player', @camera, @object_pool))
       @camera.target = @tank
-      @radar.target = @tank
+      @hud.player = @tank
     end
+  end
+
+  def enter
+    @hud.active = true
   end
 
   def leave
     StereoSample.stop_all
     toggle_profiling if @profiling_now
     puts "Pool: #{@object_pool.size}"
+    @hud.active = false
   end
 
   private

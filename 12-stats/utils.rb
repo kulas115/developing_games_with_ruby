@@ -128,5 +128,4 @@ module Utils
   def self.main_font
     media_path('armalite_rifle.ttf')
   end
-
 end
