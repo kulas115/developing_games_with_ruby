@@ -4,12 +4,14 @@ class AiInput < Component
   UPDATE_RATE = 200 # ms
   # Dark Red
   NAME_COLOR = Gosu::Color.argb(0xeeb10000)
+  attr_reader :stats
 
   def initialize(name, object_pool)
     super(nil)
     @object_pool = object_pool
     @name = name
     @last_update = Gosu.milliseconds
+    @stats = Stats.new(name)
   end
 
   def control(obj)
@@ -25,6 +27,7 @@ class AiInput < Component
 
   def on_damage(amount)
     @motion.on_damage(amount)
+    @stats.add_damage(amount)
   end
 
   def update
