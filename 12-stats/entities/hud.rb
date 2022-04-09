@@ -72,7 +72,7 @@ class HUD
     @radar.draw
     offset = 20
     health_image.draw(20, offset, 1000)
-    # stats_image.draw(20, offset += 30, 1000) # temp skip stats
+    stats_image.draw(20, offset += 30, 1000)
     fire_rate_image&.draw(20, offset += 30, 1000)
     speed_image&.draw(20, offset += 30, 1000)
   end

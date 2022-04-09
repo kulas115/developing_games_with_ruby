@@ -18,12 +18,15 @@ class TankHealth < Health
     true
   end
 
-  def after_death
-    object.reset_modifiers
+  def after_death(cause)
     @death_time = Gosu.milliseconds
+    object.reset_modifiers
+    object.input.stats.add_death
+    kill = object != cause ? 1 : -1
+    cause.input.stats.add_kill(kill)
     Thread.new do
       sleep(rand(0.1..0.3))
-      Explosion.new(@object_pool, x, y)
+      Explosion.new(@object_pool, x, y, cause)
     end
   end
 end
