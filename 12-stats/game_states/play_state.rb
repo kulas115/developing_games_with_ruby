@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PlayState < GameState
-  attr_accessor :update_interval
+  attr_accessor :update_interval, :object_pool
 
   def initialize
     # http://www.paulandstorm.com/wha/clown-names/
@@ -61,7 +61,11 @@ class PlayState < GameState
       leave
       $window.close
     end
-    GameState.switch(MenuState.instance) if id == Gosu::KbEscape
+    if id == Gosu::KbEscape
+      pause = PauseState.instance
+      pause.play_state = self
+      GameState.switch(pause)
+    end
     if id == Gosu::KbT
       t = Tank.new(@object_pool,
                    AiInput.new(@names.random, @object_pool))
