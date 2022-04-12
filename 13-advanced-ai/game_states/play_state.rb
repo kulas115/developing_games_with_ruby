@@ -12,16 +12,8 @@ class PlayState < GameState
     @map = Map.new(@object_pool)
     @map.spawn_points(100)
     @camera = Camera.new
-    @tank = Tank.new(@object_pool,
-                     PlayerInput.new('Player', @camera, @object_pool))
-    @camera.target = @tank
     @object_pool.camera = @camera
-    30.times do |_i|
-      Tank.new(@object_pool, AiInput.new(
-                               @names.random, @object_pool
-                             ))
-    end
-    @hud = HUD.new(@object_pool, @tank)
+    create_tanks(4)
     puts "Pool size: #{@object_pool.size}"
   end
 
@@ -94,6 +86,16 @@ class PlayState < GameState
   end
 
   private
+
+  def create_tanks(amount)
+    @map.spawn_points(amount * 3)
+    @tank = Tank.new(@object_pool, PlayerInput.new('Player', @camera, @object_pool))
+    amount.times do |_i|
+      Tank.new(@object_pool, AiInput.new(@names.random, @object_pool))
+    end
+    @camera.target = @tank
+    @hud = HUD.new(@object_pool, @tank)
+  end
 
   def toggle_profiling
     require 'ruby-prof' unless defined?(RubyProf)
