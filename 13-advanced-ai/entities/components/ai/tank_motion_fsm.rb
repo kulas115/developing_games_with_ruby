@@ -43,6 +43,11 @@ class TankMotionFSM
     @last_state_change = Gosu.milliseconds
     @current_state = state
     state.enter
+    if $debug
+      @image = Gosu::Image.from_text(
+        state.class.to_s, 18, font: Gosu.default_font_name
+      )
+    end
   end
 
   def choose_state
