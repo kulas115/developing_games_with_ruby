@@ -2,6 +2,7 @@
 
 class AiVision
   CACHE_TIMEOUT = 500
+  POWERUP_CACHE_TIMEOUT = 50
 
   attr_reader :in_sight
 
@@ -25,11 +26,39 @@ class AiVision
     @closest_tank ||= find_closest_tank
   end
 
+  def closest_powerup(*suitable)
+    now = Gosu.milliseconds
+    @closest_powerup = nil
+    if now - (@powerup_cache_updated_at ||= 0) > POWERUP_CACHE_TIMEOUT
+      @closest_powerup = nil
+      @powerup_cache_updated_at = now
+    end
+    @closest_powerup ||= find_closest_powerup(*suitable)
+  end
+
   private
 
   def find_closest_tank
     @in_sight.select do |o|
       o.instance_of?(Tank) && !o.health.dead?
+    end.min do |a, b|
+      x = @viewer.x
+      y = @viewer.y
+      d1 = Utils.distance_between(x, y, a.x, a.y)
+      d2 = Utils.distance_between(x, y, b.x, b.y)
+      d1 <=> d2
+    end
+  end
+
+  def find_closest_powerup(*suitable)
+    if suitable.empty?
+      suitable = [FireRatePowerup,
+                  HealthPowerup,
+                  RepairPowerup,
+                  TankSpeedPowerup]
+    end
+    @in_sight.select do |o|
+      suitable.include?(o.class)
     end.min do |a, b|
       x = @viewer.x
       y = @viewer.y
