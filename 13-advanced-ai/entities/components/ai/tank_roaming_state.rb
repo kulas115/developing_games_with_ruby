@@ -71,5 +71,6 @@ class TankRoamingState < TankMotionState
     else
       rand(1000..3000)
     end
+  
   end
 end
