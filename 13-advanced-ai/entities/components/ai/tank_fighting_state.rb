@@ -41,7 +41,7 @@ class TankFightingState < TankMotionState
   end
 
   def drive_time
-    rand(5000..10000)
+    rand(5000..10_000)
   end
 
   def turn_time
