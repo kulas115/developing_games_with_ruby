@@ -12,9 +12,47 @@ class AiVision
     @distance = distance
   end
 
+  def can_go_forward?
+    in_front = Utils.point_at_distance(
+      *@viewer.location, @viewer.direction, 40
+    )
+    @object_pool.map.can_move_to?(*in_front) &&
+      @object_pool.nearby_point(*in_front, 40, @viewer)
+                  .reject { |o| o.is_a?(Powerup) }.empty?
+  end
+
   def update
     @in_sight = @object_pool.nearby(@viewer, @distance)
   end
+
+  def closest_free_path(away_from = nil)
+    paths = []
+
+    5.times do |i|
+      return farthest_from(paths, away_from) if paths.any?
+
+      radius = 55 - i * 5
+      range_x = range_y = [-radius, 0, radius]
+      range_x.suffle.each do |x|
+        range_y.suffle.each do |y|
+          x = @viewer.x + x
+          y = @viewer.y + y
+          if @object_pool.map.can_move_to?(x, y) &&
+             @object_pool.nearby_point(x, y, radiu, @viewer)
+                         .reject { |o| o.is_a?(Powerup) }.empty?
+            if away_from
+              paths << [x, y]
+            else
+              [x, y]
+            end
+          end
+        end
+      end
+    end
+    false
+  end
+
+  alias closest_free_path_away_from closest_free_path
 
   def closest_tank
     now = Gosu.milliseconds
@@ -37,6 +75,31 @@ class AiVision
   end
 
   private
+
+  def farthest_from(paths, away_from)
+    paths.min do |p1, p2|
+      Utils.distance_between(*p1, *away_from) <=> Utils.distance_between(*p2, *away_from)
+    end
+  end
+
+  def find_closest_powerup(*suitable)
+    if suitable.empty?
+      suitable = [FireRatePowerup,
+                  HealthPowerup,
+                  RepairPowerup,
+                  TankSpeedPowerup]
+    end
+
+    @in_sight.select do |o|
+      suitable.include?(o.class)
+    end.min do |a, b|
+      x = @viewer.x
+      y = @viewer.y
+      d1 = Utils.distance_between(x, y, a.x, a.y)
+      d2 = Utils.distance_between(x, y, b.x, b.y)
+      d1 <=> d2
+    end
+  end
 
   def find_closest_tank
     @in_sight.select do |o|
