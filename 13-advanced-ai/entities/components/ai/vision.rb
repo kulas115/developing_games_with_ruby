@@ -33,12 +33,12 @@ class AiVision
 
       radius = 55 - i * 5
       range_x = range_y = [-radius, 0, radius]
-      range_x.suffle.each do |x|
-        range_y.suffle.each do |y|
+      range_x.shuffle.each do |x|
+        range_y.shuffle.each do |y|
           x = @viewer.x + x
           y = @viewer.y + y
           if @object_pool.map.can_move_to?(x, y) &&
-             @object_pool.nearby_point(x, y, radiu, @viewer)
+             @object_pool.nearby_point(x, y, radius, @viewer)
                          .reject { |o| o.is_a?(Powerup) }.empty?
             if away_from
               paths << [x, y]
