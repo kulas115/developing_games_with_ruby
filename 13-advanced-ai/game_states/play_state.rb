@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class PlayState < GameState
-  attr_accessor :update_interval, :object_pool
+  attr_accessor :update_interval, :object_pool, :tank
 
   def initialize
     # http://www.paulandstorm.com/wha/clown-names/
@@ -13,7 +13,7 @@ class PlayState < GameState
     @map.spawn_points(100)
     @camera = Camera.new
     @object_pool.camera = @camera
-    create_tanks(4)
+    create_tanks(7)
     puts "Pool size: #{@object_pool.size}"
   end
 
