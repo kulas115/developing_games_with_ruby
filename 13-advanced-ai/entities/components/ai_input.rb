@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AiInput < Component
-  UPDATE_RATE = 200 # ms
+  UPDATE_RATE = 10 # ms
   # Dark Red
   NAME_COLOR = Gosu::Color.argb(0xeeb10000)
   attr_reader :stats
