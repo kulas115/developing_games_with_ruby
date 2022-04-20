@@ -2,6 +2,7 @@
 
 class TankMotionFSM
   STATE_CHANGE_DELAY = 500
+  LOCATION_CHECK_DELAY = 5000
 
   def initialize(object, vision, gun)
     @object = object
@@ -11,6 +12,8 @@ class TankMotionFSM
     @fighting_state = TankFightingState.new(object, vision)
     @fleeing_state = TankFleeingState.new(object, vision, gun)
     @chasing_state = TankChasingState.new(object, vision, gun)
+    @stuck_state = TankStuckState.new(object, vision, gun)
+    @navigating_state = TankNavigatingState.new(object, vision)
     set_state(@roaming_state)
   end
 
@@ -51,8 +54,29 @@ class TankMotionFSM
   end
 
   def choose_state
-    return unless Gosu.milliseconds -
-                  @last_state_change > STATE_CHANGE_DELAY
+    set_state(@navigating_state) if !@vision.can_go_forward? && @current_state != @stuck_state
+    # Keep unstucking itself for a while
+    change_delay = STATE_CHANGE_DELAY
+    change_delay *= 5 if @current_state == @stuck_state
+
+    now = Gosu.milliseconds
+
+    return unless now - @last_state_change > change_delay
+
+    if @last_location_update.nil?
+      @last_location_update = now
+      @last_location = @object.location
+    end
+
+    if now - @last_location_update > LOCATION_CHECK_DELAY && !(@last_location.nil? || @current_state.waiting?) && (Utils.distance_between(
+      *@last_location, *@object.location
+    ) < 20)
+      set_state(@stuck_state)
+      @stuck_state.stuck_at = @object.location
+    end
+
+    @last_location_update = now
+    @last_location = @object.location
 
     new_state = if @gun.target
                   if @object.health.health > 40
